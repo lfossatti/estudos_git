@@ -54,10 +54,19 @@ function adicionar(&$estoque)
       $id = $key;
     }
   }
+
   if ($nome == "") {
     $nome = readline("Nome do produto: ");
     $quantidade = (int)readline("Quantidade: ");
+    if ($quantidade < 1) {
+      echo "Quantidade informada é inválida! \n";
+      return;
+    }
     $valor = (float)readline("Valor (ex: 10.50): ");
+    if ($quantidade < 1) {
+      echo "Valor informado é inválida! \n";
+      return;
+    }    
     $custo_medio = $valor / $quantidade;
 
     $estoque[] = [
@@ -69,8 +78,8 @@ function adicionar(&$estoque)
   ];    
   }
   else {
-    $estoque[$id]['quantidade'] = $produto['quantidade'] + (int) readline("Alterar quantidade: ");
-    $estoque[$id]['valor'] = $produto['valor'] + (float)readline("Valor (ex: 10.50): ");
+    $estoque[$id]['quantidade'] = $estoque[$id]['quantidade'] + (int) readline("Adicionar quantidade: ");
+    $estoque[$id]['valor'] = $estoque[$id]['valor'] + (float)readline("Valor compras (ex: 10.50): ");
     $estoque[$id]['custo_medio'] = ($estoque[$id]['valor'] / $estoque[$id]['quantidade']);
   }
 
@@ -80,23 +89,29 @@ function adicionar(&$estoque)
 
 function remover(&$estoque) 
 {
-    listar($estoque);
-    $cod = readline("Informe o código do produto: ");
-    if (!isset($estoque[$cod])) {
-        echo "Produto não encontrado.\n";
-        return;
+  listar($estoque);
+  $id = "";
+  $cod = readline("Informe o código do produto: ");
+  foreach ($estoque as $key => $produto) {
+    if ($cod == $produto['cod']) {
+      $id = $key;
     }
-    else {
+  }
 
-      foreach ($estoque as $key => $produto ) {
-        if ($cod == $produto['cod']) {
-          $id = $key;
-        }
-      }
-      $estoque[$id]['quantidade'] = $produto['quantidade'] - (int) readline("Alterar quantidade: ");
-      $estoque[$id]['valor'] = $produto['valor'] - (float)readline("Valor (ex: 10.50): ");
-      $estoque[$id]['custo_medio'] = ($estoque[$id]['valor'] / $estoque[$id]['quantidade']);
-    }
+//  echo "Produto localizado: id = $id \n";
+//  echo "Produto localizado: Qtde = $estoque[$id]['quantidade'] \n";
+//  echo "Produto localizado: CMd = $estoque[$id]['custo_medio'] \n";
+
+  if ($id == "") {
+    echo "Produto não encontrado.\n";
+    return;    
+  }
+  else {
+    $qtde_baixa = (int) readline("Quantidade baixa: ");
+    $estoque[$id]['quantidade'] = $estoque[$id]['quantidade'] - $qtde_baixa;
+    $estoque[$id]['valor'] =  $estoque[$id]['valor'] - ($produto['custo_medio'] * $qtde_baixa);
+    $estoque[$id]['custo_medio'] = ($estoque[$id]['valor'] / $estoque[$id]['quantidade']);
+  }
 
 //    echo "\n";
 //    echo "\033[31m======================================================\033[0m\n";
